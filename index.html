@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Saveurs & Délices - Traiteur et Livraison</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 8C16 8 14 11 14 14v2h12v-2c0-3-2-6-6-6z' fill='%23e67e22'/%3E%3Crect x='17' y='16' width='6' height='3' rx='1' fill='%23e67e22'/%3E%3Cpath d='M14 19h12v2c0 4-3 6-6 6s-6-2-6-6v-2z' fill='%23e67e22' opacity='0.7'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .order-btn { display:inline-block; margin-top:0.8rem; padding:0.5rem 1.2rem; background:var(--text-title); color:#fff; border:none; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); border-radius:8px; }
@@ -42,7 +43,19 @@
 <!-- ===== SITE PUBLIC ===== -->
 <div id="publicSite">
   <nav class="navbar" id="mainNav">
-    <div class="logo">Saveurs <span>&amp; Délices</span></div>
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" width="32" height="32" style="vertical-align:middle;margin-right:8px;">
+        <circle cx="20" cy="20" r="19" fill="none" stroke="#e67e22" stroke-width="1.5" opacity="0.5"/>
+        <path d="M20 8C16 8 14 11 14 14v2h12v-2c0-3-2-6-6-6z" fill="#e67e22" opacity="0.9"/>
+        <rect x="17" y="16" width="6" height="3" rx="1" fill="#e67e22" opacity="0.9"/>
+        <path d="M14 19h12v2c0 4-3 6-6 6s-6-2-6-6v-2z" fill="#e67e22" opacity="0.7"/>
+        <path d="M11 24c0 3 4 8 9 8s9-5 9-8" fill="none" stroke="#e67e22" stroke-width="1.2" opacity="0.5"/>
+        <circle cx="16" cy="12" r="1" fill="#d35400" opacity="0.6"/>
+        <circle cx="20" cy="11" r="1" fill="#d35400" opacity="0.6"/>
+        <circle cx="24" cy="12" r="1" fill="#d35400" opacity="0.6"/>
+      </svg>
+      Saveurs <span>&amp; Délices</span>
+    </div>
     <ul class="nav-links">
       <li><a href="#accueil">Accueil</a></li>
       <li><a href="#menu">Menu</a></li>
@@ -134,7 +147,14 @@
       <span style="color:var(--text-muted);font-size:0.85rem;">✉️ contact@saveurs-delices.fr</span>
       <span style="color:var(--text-muted);font-size:0.85rem;">📍 42 Rue des Gastronomes, 75001 Paris</span>
     </div>
-    <p class="footer-brand" id="brandTrigger">Saveurs &amp; Délices</p>
+    <p class="footer-brand" id="brandTrigger">
+      <svg viewBox="0 0 40 40" width="24" height="24" style="vertical-align:middle;margin-right:6px;">
+        <path d="M20 8C16 8 14 11 14 14v2h12v-2c0-3-2-6-6-6z" fill="#e67e22" opacity="0.9"/>
+        <rect x="17" y="16" width="6" height="3" rx="1" fill="#e67e22" opacity="0.9"/>
+        <path d="M14 19h12v2c0 4-3 6-6 6s-6-2-6-6v-2z" fill="#e67e22" opacity="0.7"/>
+      </svg>
+      Saveurs &amp; Délices
+    </p>
     <p>&copy; 2024 - Tous droits réservés</p>
     <p>Traiteur • Livraison • Événementiel</p>
   </footer>
@@ -156,7 +176,7 @@
 <!-- ===== PANEL ADMIN ===== -->
 <div class="admin-panel" id="adminPanel">
   <aside class="sidebar" id="adminSidebar">
-    <div class="sidebar-header" onclick="toggleSidebarMobile()"><div class="sidebar-brand">Saveurs & Délices <small>Espace administration</small></div></div>
+    <div class="sidebar-header" onclick="toggleSidebarMobile()"><div class="sidebar-brand"><svg viewBox="0 0 40 40" width="20" height="20" style="vertical-align:middle;margin-right:6px;"><path d="M20 8C16 8 14 11 14 14v2h12v-2c0-3-2-6-6-6z" fill="#e67e22" opacity="0.9"/><rect x="17" y="16" width="6" height="3" rx="1" fill="#e67e22" opacity="0.9"/><path d="M14 19h12v2c0 4-3 6-6 6s-6-2-6-6v-2z" fill="#e67e22" opacity="0.7"/></svg>Saveurs & Délices <small>Espace administration</small></div></div>
     <nav>
       <a href="#" class="active" onclick="showSection('dashboard-home')"><span class="nav-icon">📊</span> Tableau de bord</a>
       <div class="has-submenu">
