@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archives comptables</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      background: #f5f6fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .compta-page-header {
+      background: #1a1a1a;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .compta-page-header h1 {
+      color: #e67e22;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+    .compta-page-header h1 small {
+      color: #666;
+      font-weight: 400;
+      font-size: 0.75rem;
+      display: block;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+    .compta-page-header a {
+      color: #888;
+      font-size: 0.8rem;
+      transition: color 0.3s;
+    }
+    .compta-page-header a:hover {
+      color: #e67e22;
+    }
+    .compta-page-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .compta-login-box {
+      background: #fff;
+      max-width: 420px;
+      margin: 4rem auto;
+      padding: 3rem;
+      text-align: center;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+    .compta-login-box h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+    .compta-login-box p {
+      color: #888;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .compta-login-box input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      font-family: inherit;
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .compta-login-box input:focus {
+      outline: none;
+      border-color: #e67e22;
+    }
+    .compta-login-box button {
+      width: 100%;
+      padding: 0.8rem;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .compta-login-box button:hover {
+      background: #e67e22;
+    }
+    .compta-login-box .error {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    .compta-login-box .error.visible {
+      display: block;
+    }
+    .compta-result {
+      display: none;
+    }
+    .compta-result.visible {
+      display: block;
+    }
+    .compta-result .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.3rem;
+      text-align: left;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+    .compta-result .section-sub {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 1.5rem;
+    }
+    .compta-result .totals {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .compta-result .totals .box {
+      flex: 1;
+      min-width: 160px;
+      background: #fff;
+      padding: 1.2rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .compta-result .totals .box .label {
+      font-size: 0.7rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.3rem;
+    }
+    .compta-result .totals .box .value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+    .compta-result .totals .box .value.green { color: #27ae60; }
+    .compta-result .totals .box .value.red { color: #e74c3c; }
+    .compta-result .totals .box .value.blue { color: #2980b9; }
+    .compta-table-wrap {
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+    .compta-table-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .compta-table-wrap th {
+      text-align: left;
+      padding: 0.8rem 1rem;
+      background: #f9f9f9;
+      color: #888;
+      font-weight: 600;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .compta-table-wrap td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid #f5f5f5;
+      color: #555;
+    }
+    .compta-table-wrap tr:hover td {
+      background: #fafafa;
+    }
+    .compta-table-wrap td.amount {
+      text-align: right;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+    }
+    .compta-table-wrap td.positive { color: #27ae60; }
+    .compta-table-wrap td.negative { color: #e74c3c; }
+    .warning-banner {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.5rem;
+      display: none;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .warning-banner.visible {
+      display: flex;
+    }
+    .warning-banner .icon { font-size: 1.2rem; }
+    .warning-banner .text { font-size: 0.8rem; color: #b91c1c; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="compta-page-header">
+    <h1>Archives comptables <small>Saveurs &amp; Délices</small></h1>
+    <a href="index.html">← Retour au site</a>
+  </div>
+
+  <div class="compta-page-content" id="comptaContent">
+    <div class="compta-login-box" id="loginBox">
+      <h2>Accès réservé</h2>
+      <p>Entrez le code d'accès aux archives</p>
+      <input type="password" id="codeInput" placeholder="Code" autocomplete="off">
+      <button onclick="handleCode()">Accéder</button>
+      <div class="error" id="codeError">Code incorrect.</div>
+    </div>
+
+    <div class="compta-result" id="comptaResult">
+      <div class="warning-banner" id="warningBanner">
+        <span class="icon">⚠️</span>
+        <span class="text">Registre confidentiel - Diffusion interdite</span>
+      </div>
+
+      <h2 class="section-title" id="comptaTitle">Titre</h2>
+      <p class="section-sub" id="comptaSubtitle">Sous-titre</p>
+
+      <div class="totals">
+        <div class="box"><div class="label">Total recettes</div><div class="value green" id="totalRecettes">0 $</div></div>
+        <div class="box"><div class="label">Total dépenses</div><div class="value red" id="totalDepenses">0 $</div></div>
+        <div class="box"><div class="label">Solde net</div><div class="value blue" id="totalSolde">0 $</div></div>
+      </div>
+
+      <div class="compta-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Catégorie</th>
+              <th class="amount">Recettes</th>
+              <th class="amount">Dépenses</th>
+            </tr>
+          </thead>
+          <tbody id="comptaBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/data.js"></script>
+  <script>
+    function handleCode() {
+      var code = document.getElementById('codeInput').value.trim().toUpperCase();
+      var error = document.getElementById('codeError');
+      error.classList.remove('visible');
+
+      if (code === COMPTA.codes.legal) {
+        renderCompta('legal');
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('comptaResult').classList.add('visible');
+      } else if (code === COMPTA.codes.illegal) {
+        renderCompta('illegal');
+        document.getElementById('warningBanner').classList.add('visible');
+        document.getElementById('comptaResult').classList.add('visible');
+        document.getElementById('loginBox').style.display = 'none';
+      } else {
+        error.classList.add('visible');
+        document.getElementById('codeInput').value = '';
+        document.getElementById('codeInput').focus();
+      }
+    }
+
+    function renderCompta(type) {
+      var data = COMPTA[type];
+      document.getElementById('comptaTitle').textContent = data.titre;
+      document.getElementById('comptaSubtitle').textContent = data.soustitre;
+
+      var totalRecettes = 0, totalDepenses = 0;
+      var rows = '';
+
+      data.entrees.forEach(function(e) {
+        totalRecettes += e.recette;
+        totalDepenses += e.depense;
+        var df = e.date.split('-').reverse().join('/');
+        rows += '<tr>' +
+          '<td>' + df + '</td>' +
+          '<td>' + e.description + '</td>' +
+          '<td>' + e.categorie + '</td>' +
+           '<td class="amount positive">' + (e.recette > 0 ? e.recette.toLocaleString('fr-FR') + ' $' : '-') + '</td>' +
+           '<td class="amount negative">' + (e.depense > 0 ? e.depense.toLocaleString('fr-FR') + ' $' : '-') + '</td>' +
+          '</tr>';
+      });
+
+      document.getElementById('comptaBody').innerHTML = rows;
+      document.getElementById('totalRecettes').textContent = totalRecettes.toLocaleString('fr-FR') + ' $';
+      document.getElementById('totalDepenses').textContent = totalDepenses.toLocaleString('fr-FR') + ' $';
+      document.getElementById('totalSolde').textContent = (totalRecettes - totalDepenses).toLocaleString('fr-FR') + ' $';
+    }
+
+    function getQueryParam(name) {
+      var url = new URL(window.location.href);
+      return url.searchParams.get(name) || '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('codeInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') handleCode();
+      });
+      document.getElementById('codeInput').focus();
+
+      var autoCode = getQueryParam('code').trim().toUpperCase();
+      if (autoCode === COMPTA.codes.legal || autoCode === COMPTA.codes.illegal) {
+        document.getElementById('codeInput').value = autoCode;
+        handleCode();
+      }
+    });
+  </script>
+</body>
+</html>

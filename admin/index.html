@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Saveurs & Délices</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <!-- Écran de connexion -->
+  <div id="loginScreen" class="admin-login-body">
+    <div class="login-container">
+      <div class="login-logo">Saveurs &amp; Délices</div>
+      <div class="login-subtitle">Accès administration</div>
+      <input type="password" id="loginPassword" placeholder="Mot de passe" autocomplete="off">
+      <button onclick="handleLogin()">Se connecter</button>
+      <div class="login-error" id="loginError">Mot de passe incorrect.</div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="admin-body" style="display: none;">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          Saveurs & Délices
+          <small>Espace administration</small>
+        </div>
+      </div>
+      <nav>
+        <a href="#" class="active" onclick="showSection('dashboard-home')">
+          <span class="nav-icon">📊</span> Tableau de bord
+        </a>
+        <div class="has-submenu">
+          <a class="submenu-toggle" onclick="toggleSubmenu(event)">
+            <span><span class="nav-icon">📁</span> Archives</span>
+            <span class="arrow">▶</span>
+          </a>
+          <div class="submenu" id="archiveSubmenu">
+            <a href="#" onclick="showSection('archives')">📄 Consultation</a>
+            <a href="#" onclick="showSection('declaration')">✏️ Déclaration</a>
+            <a href="#" onclick="showSection('blocnotes')">📝 Bloc-Notes</a>
+            <a href="#" onclick="showSection('produits')">🍽️ Produits</a>
+            <a href="#" onclick="showSection('gestion-commandes')">📋 Commandes <span class="nav-badge" id="cmdBadge">0</span></a>
+          </div>
+        </div>
+        <a href="#" onclick="showSection('settings')">
+          <span class="nav-icon">⚙️</span> Paramètres
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="logout-link" onclick="handleLogout()">⏻  Déconnexion</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="page-header">
+        <h1 id="pageTitle">Tableau de bord</h1>
+        <div class="user-badge">Admin connecté</div>
+      </div>
+
+      <!-- Dashboard -->
+      <div id="dashboard-home" class="section-view">
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-label">Produits au menu</div>
+            <div class="stat-value green" id="statProduits">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Commandes en attente</div>
+            <div class="stat-value orange" id="statCommandes">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Chiffre d'affaires (mois)</div>
+            <div class="stat-value blue">38 450 $</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Taux de satisfaction</div>
+            <div class="stat-value green">98%</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Dernières commandes</h3></div>
+          <div class="card-body" id="dashboardCommandes">
+            <p style="color:#888;font-size:0.9rem;">Aucune commande pour le moment.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consultation -->
+      <div id="archives" class="section-view" style="display: none;">
+        <div class="compta-section">
+          <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;color:#1a1a1a;">Archives comptables</h3>
+          <p class="info-text">Entrez le code d'accès pour visualiser les registres.</p>
+          <div class="code-input-group">
+            <input type="password" id="codeInput" placeholder="Code d'accès" autocomplete="off">
+            <button onclick="checkCode()">Accéder</button>
+          </div>
+          <div class="code-error" id="codeError">Code incorrect.</div>
+
+          <div class="illegal-warning" id="illegalWarning">
+            <span class="warning-icon">⚠️</span>
+            <span class="warning-text">Registre confidentiel - Diffusion interdite</span>
+          </div>
+
+          <div class="compta-table-wrapper" id="comptaTable">
+            <h2 id="comptaTitle">Titre</h2>
+            <p class="compta-subtitle" id="comptaSubtitle">Sous-titre</p>
+            <div class="compta-totals">
+              <div class="total-box"><div class="total-label">Total recettes</div><div class="total-amount green" id="totalRecettes">0 $</div></div>
+              <div class="total-box"><div class="total-label">Total dépenses</div><div class="total-amount red" id="totalDepenses">0 $</div></div>
+              <div class="total-box"><div class="total-label">Solde net</div><div class="total-amount blue" id="totalSolde">0 $</div></div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Catégorie</th>
+                    <th class="amount">Recettes</th>
+                    <th class="amount">Dépenses</th>
+                  </tr>
+                </thead>
+                <tbody id="comptaBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Déclaration -->
+      <div id="declaration" class="section-view" style="display: none;">
+        <div class="card">
+          <div class="card-header"><h3>Déclarer une entrée comptable</h3></div>
+          <div class="card-body">
+            <form id="declarationForm" style="max-width:600px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Date</label>
+                  <input type="date" id="declDate" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Catégorie</label>
+                  <input type="text" id="declCategorie" placeholder="ex: Traiteur, Transport..." required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+                </div>
+              </div>
+              <div style="margin-top:1rem;">
+                <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Description</label>
+                <input type="text" id="declDescription" placeholder="Description de l'opération" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Montant</label>
+                  <input type="number" id="declMontant" placeholder="0" min="0" step="0.01" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Type</label>
+                  <div style="display:flex;gap:1rem;padding:0.8rem 0;">
+                    <label style="font-size:0.9rem;cursor:pointer;"><input type="radio" name="declType" value="recette" checked> Recette</label>
+                    <label style="font-size:0.9rem;cursor:pointer;"><input type="radio" name="declType" value="depense"> Dépense</label>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:1rem;">
+                <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Registre</label>
+                <div style="display:flex;gap:1rem;padding:0.8rem 0;">
+                  <label style="font-size:0.9rem;cursor:pointer;"><input type="radio" name="declRegistre" value="legal" checked> Comptabilité légale</label>
+                  <label style="font-size:0.9rem;cursor:pointer;"><input type="radio" name="declRegistre" value="illegal"> Registre confidentiel</label>
+                </div>
+              </div>
+              <button type="submit" style="margin-top:1.5rem;padding:0.8rem 3rem;background:#1a1a1a;color:#fff;border:none;font-weight:600;cursor:pointer;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;">Déclarer</button>
+            </form>
+            <div id="declSuccess" style="display:none;margin-top:1rem;padding:1rem;background:#e8f5e9;color:#27ae60;border-radius:4px;font-weight:500;">Entrée ajoutée avec succès.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloc-Notes -->
+      <div id="blocnotes" class="section-view" style="display: none;">
+        <div class="card">
+          <div class="card-header"><h3>Bloc-Notes</h3></div>
+          <div class="card-body">
+            <p style="color:#888;font-size:0.85rem;margin-bottom:1rem;">Prenez des notes, elles seront sauvegardées automatiquement.</p>
+            <textarea id="blocnotesText" placeholder="Écrivez vos notes ici..." style="width:100%;min-height:300px;padding:1rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;line-height:1.6;resize:vertical;"></textarea>
+            <p style="color:#888;font-size:0.75rem;margin-top:0.5rem;">Dernière sauvegarde : <span id="blocnotesSaved">jamais</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Produits -->
+      <div id="produits" class="section-view" style="display: none;">
+        <div class="card" style="margin-bottom:2rem;">
+          <div class="card-header"><h3>Ajouter un produit</h3></div>
+          <div class="card-body">
+            <form id="produitForm" style="max-width:600px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Icône</label>
+                  <input type="text" id="prodIcone" placeholder="🍕" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;text-align:center;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Nom</label>
+                  <input type="text" id="prodNom" placeholder="Nom du produit" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Prix ($)</label>
+                  <input type="number" id="prodPrix" placeholder="0" min="0" step="0.50" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+                </div>
+              </div>
+              <div style="margin-top:1rem;">
+                <label style="display:block;font-size:0.8rem;color:#888;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:1px;">Description</label>
+                <input type="text" id="prodDescription" placeholder="Description du produit" required style="width:100%;padding:0.8rem;border:1px solid #ddd;font-family:inherit;font-size:0.9rem;">
+              </div>
+              <button type="submit" style="margin-top:1rem;padding:0.7rem 2rem;background:#1a1a1a;color:#fff;border:none;font-weight:600;cursor:pointer;font-size:0.85rem;">Ajouter</button>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Produits du menu</h3></div>
+          <div class="card-body" id="produitsList">
+            <p style="color:#888;font-size:0.9rem;">Aucun produit pour le moment.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commandes (gestion) -->
+      <div id="gestion-commandes" class="section-view" style="display: none;">
+        <div class="card">
+          <div class="card-header"><h3>Commandes reçues</h3></div>
+          <div class="card-body" id="commandesList">
+            <p style="color:#888;font-size:0.9rem;">Aucune commande reçue.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paramètres -->
+      <div id="settings" class="section-view" style="display: none;">
+        <div class="card">
+          <div class="card-header"><h3>Paramètres</h3></div>
+          <div class="card-body">
+            <p style="color:#888;font-size:0.9rem;">Gestion du compte et préférences.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
