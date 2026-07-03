@@ -529,6 +529,7 @@
 
 <button class="switch-btn" onclick="toggleView()">⇄</button>
 <div class="float-info" id="floatInfo">📋 <strong id="floatCmdCount">0</strong> commande(s) en attente</div>
+<button class="admin-float-btn" id="adminFloatBtn" onclick="ouvrirCodeModal()" title="Accès admin">🔐</button>
 
 <script src="js/store.js"></script>
 <script src="js/data.js"></script>
@@ -623,11 +624,12 @@ function handleAdminLogin(){
     document.getElementById('adminLoginOverlay').classList.remove('active');
     document.getElementById('publicSite').style.display='none';
     document.getElementById('adminPanel').classList.add('active');
+    document.getElementById('adminFloatBtn').style.display='none';
     estEnModeAdmin=true;renderProduits();renderCommandes();updateFloatInfo();renderNotifHistory();renderMiniChart();
     playSuccess();
   }else{document.getElementById('adminLoginError').classList.add('visible');document.getElementById('adminPwd').value='';playError();}
 }
-function handleAdminLogout(){document.getElementById('adminPanel').classList.remove('active');document.getElementById('publicSite').style.display='block';estEnModeAdmin=false;}
+function handleAdminLogout(){document.getElementById('adminPanel').classList.remove('active');document.getElementById('publicSite').style.display='block';if(window.innerWidth<=768)document.getElementById('adminFloatBtn').style.display='flex';estEnModeAdmin=false;}
 function toggleView(){if(estEnModeAdmin)handleAdminLogout();else openAdminLogin();}
 function updateFloatInfo(){var el=document.getElementById('floatInfo');if(!el)return;var cmds=getCommandes(),enA=cmds.filter(function(c){return c.statut==='En attente';}).length;document.getElementById('floatCmdCount').textContent=enA;if(enA>0)el.classList.add('visible');else el.classList.remove('visible');}
 
