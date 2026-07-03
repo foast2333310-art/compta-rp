@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:#f5f5f5;display:flex;justify-content:center;padding:2rem 1rem;min-height:100vh;}
+  .invoice{max-width:800px;width:100%;background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.1);padding:2.5rem 3rem;}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5rem;border-bottom:3px solid #e67e22;padding-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+  .header-left h1{font-size:1.8rem;font-weight:800;color:#1a1a2e;text-transform:uppercase;letter-spacing:1px;}
+  .header-left .sub{font-size:0.8rem;color:#888;margin-top:0.2rem;}
+  .header-right{text-align:right;}
+  .header-right .label{font-size:0.75rem;text-transform:uppercase;color:#888;letter-spacing:1px;}
+  .header-right .num{font-size:1.4rem;font-weight:700;color:#e67e22;}
+  .badge{display:inline-block;padding:0.3rem 1rem;border-radius:20px;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:0.5rem;background:#e67e22;color:#fff;}
+  .details{display:flex;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+  .detail-box{background:#fafafa;padding:1rem;border-radius:8px;flex:1;min-width:160px;border-left:3px solid #e67e22;}
+  .detail-box .lbl{font-size:0.7rem;text-transform:uppercase;color:#888;letter-spacing:1px;}
+  .detail-box .val{font-size:1rem;font-weight:600;color:#1a1a2e;margin-top:0.3rem;}
+  table{width:100%;border-collapse:collapse;margin-bottom:2rem;}
+  th{text-align:left;padding:0.8rem 0.5rem;font-size:0.75rem;text-transform:uppercase;color:#888;letter-spacing:1px;border-bottom:2px solid #eee;}
+  td{padding:0.8rem 0.5rem;border-bottom:1px solid #eee;font-size:0.9rem;color:#333;}
+  td:last-child{text-align:right;font-weight:600;}
+  th:last-child{text-align:right;}
+  .total-row td{border-bottom:none;padding:0.5rem;}
+  .total-row td:last-child{font-weight:700;}
+  .grand-total td{font-size:1.1rem;font-weight:800;color:#1a1a2e;border-top:3px solid #e67e22;padding-top:0.8rem;}
+  .grand-total td:last-child{color:#e67e22;font-size:1.4rem;}
+  .footer{text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee;}
+  .footer p{font-size:0.75rem;color:#aaa;}
+  .stamp{position:relative;display:inline-block;margin-top:1rem;padding:0.5rem 1.5rem;border:3px solid #e67e22;color:#e67e22;font-weight:800;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;transform:rotate(-5deg);opacity:0.6;border-radius:4px;}
+  .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:12rem;font-weight:800;color:rgba(230,126,34,0.03);pointer-events:none;z-index:0;letter-spacing:20px;text-transform:uppercase;}
+  @media print{body{background:#fff;padding:0;}.invoice{box-shadow:none;border-radius:0;padding:1.5rem;}.watermark{display:none;}}
+  @media(max-width:600px){.invoice{padding:1.5rem;}.header{flex-direction:column;}.header-right{text-align:left;}}
+</style>
+</head>
+<body>
+<div class="watermark">JUSTIFICATIF</div>
+<div class="invoice" id="invoice">
+  <div class="header">
+    <div class="header-left">
+      <h1>Saveurs &amp; Délices</h1>
+      <div class="sub">SARL au capital de 15 000 $ &bull; RCS Paris 852 478 963</div>
+      <div class="sub">12 Rue de la Gastronomie, 75001 Paris</div>
+    </div>
+    <div class="header-right">
+      <div class="label">Document</div>
+      <div class="num" id="docId">FAK-2024-001</div>
+      <div class="badge" id="docType">FACTURE</div>
+    </div>
+  </div>
+  <div class="details">
+    <div class="detail-box">
+      <div class="lbl">Date d'émission</div>
+      <div class="val" id="docDate">15/01/2024</div>
+    </div>
+    <div class="detail-box">
+      <div class="lbl">Client</div>
+      <div class="val" id="clientName">Client Anonyme</div>
+    </div>
+    <div class="detail-box">
+      <div class="lbl">Catégorie</div>
+      <div class="val" id="docCat">Prestation de service</div>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Description</th><th>Qté</th><th>Prix unitaire</th><th>Total</th></tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="footer">
+    <p>Saveurs &amp; Délices SARL &bull; TVA non applicable, art. 293 B du CGI</p>
+    <p>RIB : FR76 2823 3000 0149 0824 0841 204 &bull; BIC : REVOFRP2</p>
+    <p>Ce document est une pièce comptable justificative.</p>
+    <div class="stamp">PAYÉ</div>
+  </div>
+</div>
+<script>
+  var p=new URLSearchParams(location.search);
+  var montant=parseFloat(p.get('montant'))||0;
+  var desc=p.get('description')||'Prestation de services';
+  var type=p.get('type')||'Facture';
+  var id=p.get('id')||'FAK-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*999)+1).padStart(3,'0');
+  var date=p.get('date')||new Date().toLocaleDateString('fr-FR');
+  var client=p.get('client')||'Client Anonyme';
+  var cat=p.get('categorie')||'Prestation';
+  var qte=parseInt(p.get('qte'))||1;
+  var pu=qte>1?Math.round(montant/qte*100)/100:montant;
+
+  document.getElementById('docId').textContent=id;
+  document.getElementById('docType').textContent=type.toUpperCase();
+  document.getElementById('docDate').textContent=date;
+  document.getElementById('clientName').textContent=client;
+  document.getElementById('docCat').textContent=cat;
+
+  var t='<tr><td>'+desc+'</td><td>'+qte+'</td><td>'+pu.toFixed(2)+' $</td><td>'+(pu*qte).toFixed(2)+' $</td></tr>';
+  t+='<tr class="total-row"><td colspan="3" style="text-align:right;font-weight:600;">Sous-total</td><td>'+montant.toFixed(2)+' $</td></tr>';
+  t+='<tr class="total-row"><td colspan="3" style="text-align:right;font-weight:600;color:#888;font-size:0.8rem;">TVA (0%)</td><td style="color:#888;">0,00 $</td></tr>';
+  t+='<tr class="grand-total"><td colspan="3" style="text-align:right;">TOTAL</td><td>'+montant.toFixed(2)+' $</td></tr>';
+  document.getElementById('tableBody').innerHTML=t;
+</script>
+</body>
+</html>
