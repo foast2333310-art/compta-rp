@@ -77,6 +77,10 @@
 
 <!-- ===== SITE PUBLIC ===== -->
 <div id="publicSite">
+  <div id="promoBanner" style="display:none;background:var(--accent-grad);color:#fff;text-align:center;padding:0.5rem 1rem;font-size:0.85rem;font-weight:600;letter-spacing:1px;position:relative;cursor:pointer;" onclick="this.style.display='none'">
+    <span id="promoBannerText">Livraison offerte dès 30 $</span>
+    <span style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:0.8rem;opacity:0.7;">✕</span>
+  </div>
   <nav class="navbar" id="mainNav">
     <div class="logo">
       <svg class="logo-icon" viewBox="0 0 40 40" width="32" height="32" style="vertical-align:middle;margin-right:8px;">
@@ -440,6 +444,24 @@
         </div>
       </div>
       <div class="card">
+        <div class="card-header"><h3>📢 Bannière promo</h3></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.8rem;flex-wrap:wrap;">
+            <span style="color:var(--text);font-size:0.9rem;">Afficher la bannière</span>
+            <label style="position:relative;display:inline-block;width:44px;height:24px;">
+              <input type="checkbox" id="promoEnabled" onchange="savePromoBanner()" style="opacity:0;width:0;height:0;">
+              <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--text-muted);border-radius:12px;transition:0.3s;" id="promoSlider"></span>
+              <span style="position:absolute;content:'';height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s;" id="promoKnob"></span>
+            </label>
+          </div>
+          <div><label style="display:block;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Texte de la bannière</label>
+          <div style="display:flex;gap:0.5rem;max-width:500px;">
+            <input type="text" id="promoText" value="Livraison offerte dès 30 $" onchange="savePromoBanner()" style="flex:1;padding:0.6rem;border:1px solid var(--border);font-family:inherit;font-size:0.9rem;background:var(--bg-card);color:var(--text);border-radius:6px;">
+            <button onclick="savePromoBanner();showPreviewPromo();" style="padding:0.6rem 1rem;background:var(--accent-grad);color:#fff;border:none;cursor:pointer;font-weight:600;font-size:0.8rem;border-radius:6px;">Aperçu</button>
+          </div></div>
+        </div>
+      </div>
+      <div class="card">
         <div class="card-header"><h3>🔑 Codes d'accès</h3></div>
         <div class="card-body">
           <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Codes pour accéder aux archives comptables (triple-click sur le logo dans le footer).</p>
@@ -637,7 +659,7 @@ function showSection(id){
   if(id==='gestion-commandes')renderCommandes();
   if(id==='blocnotes'){var s=localStorage.getItem(STORAGE_NOTES);if(s)document.getElementById('blocnotesText').value=s;renderMessages();}
   if(id==='dashboard-home'){renderProduits();renderCommandes();renderMiniChart();renderPieChart();renderSalesChart();}
-  if(id==='settings'){chargerCodes();}
+  if(id==='settings'){chargerCodes();loadPromoBanner();}
   if(id==='historique')renderNotifHistory();
   playClick();var sb=document.getElementById('adminSidebar');sb&&sb.classList.remove('open');
 }
@@ -651,6 +673,12 @@ var codeTypeAttendu=null;
 function getCodes(){try{var c=JSON.parse(localStorage.getItem('compta_codes'));if(c&&c.legal&&c.illegal)return c;}catch{}return{legal:COMPTA.codes.legal,illegal:COMPTA.codes.illegal};}
 function sauvegarderCodes(){var l=document.getElementById('codeLegal').value.trim().toUpperCase(),i=document.getElementById('codeIllegal').value.trim().toUpperCase();if(!l||!i)return;localStorage.setItem('compta_codes',JSON.stringify({legal:l,illegal:i}));var s=document.getElementById('codesSaved');s.style.display='inline';setTimeout(function(){s.style.display='none';},2000);playSuccess();}
 function chargerCodes(){var c=getCodes();document.getElementById('codeLegal').value=c.legal;document.getElementById('codeIllegal').value=c.illegal;}
+
+// ===== PROMO BANNER =====
+function loadPromoBanner(){try{var p=JSON.parse(localStorage.getItem('compta_promo'));if(p){document.getElementById('promoEnabled').checked=p.enabled;document.getElementById('promoText').value=p.text||'';}else{document.getElementById('promoEnabled').checked=false;document.getElementById('promoText').value='Livraison offerte dès 30 $';}}catch(e){}applyPromoBanner();}
+function savePromoBanner(){var e=document.getElementById('promoEnabled').checked,t=document.getElementById('promoText').value.trim()||'Promo en cours';localStorage.setItem('compta_promo',JSON.stringify({enabled:e,text:t}));applyPromoBanner();var kb=document.getElementById('promoKnob'),sl=document.getElementById('promoSlider');if(e){kb.style.transform='translateX(20px)';sl.style.background='var(--accent-grad)';}else{kb.style.transform='translateX(0)';sl.style.background='var(--text-muted)';}}
+function applyPromoBanner(){try{var p=JSON.parse(localStorage.getItem('compta_promo'));if(!p)return;var b=document.getElementById('promoBanner'),t=document.getElementById('promoBannerText');if(p.enabled){b.style.display='block';t.textContent=p.text;}else{b.style.display='none';}}catch(e){}}
+function showPreviewPromo(){savePromoBanner();setTimeout(function(){document.getElementById('promoBanner').style.display='block';},100);}
 function demanderCode(type){codeTypeAttendu=type;document.getElementById('tabLegal').style.background=(type==='legal'?'var(--text-title)':'var(--text-muted)');document.getElementById('tabIllegal').style.background=(type==='illegal'?'var(--text-title)':'var(--text-muted)');document.getElementById('illegalWarning').classList.remove('visible');document.getElementById('comptaTable').style.display='none';document.getElementById('comptaTable').className='compta-table-wrapper';document.getElementById('archivesCodeError').style.display='none';var p=document.getElementById('codePrompt');p.style.display='flex';var inp=document.getElementById('archivesCode');inp.value='';inp.focus();playClick();}
 function verifierCode(){var c=document.getElementById('archivesCode').value.trim().toUpperCase();if(!codeTypeAttendu)return;var codes=getCodes();if((codeTypeAttendu==='legal'&&c===codes.legal)||(codeTypeAttendu==='illegal'&&c===codes.illegal)){document.getElementById('codePrompt').style.display='none';document.getElementById('archivesCodeError').style.display='none';document.getElementById('illegalWarning').classList.toggle('visible',codeTypeAttendu==='illegal');var ct=document.getElementById('comptaTable');ct.style.display='block';if(codeTypeAttendu==='illegal')ct.className='compta-table-wrapper illegal-active';else ct.className='compta-table-wrapper';renderCompta(getAllEntries(codeTypeAttendu),codeTypeAttendu);playSuccess();}else{document.getElementById('archivesCodeError').style.display='block';document.getElementById('archivesCode').value='';playError();}}
 function supprimerDeclaration(id,type){supprimerEntree(id,type);renderCompta(getAllEntries(type),type);}
@@ -797,6 +825,7 @@ function renderDashboardCommandes(){
 }
 
 // ===== PANIER PUBLIC =====
+applyPromoBanner();
 var panier=[];
 function getProduitsPublic(){try{var s=JSON.parse(localStorage.getItem(STORAGE_PRODS));if(s&&s.length>0)return s;}catch{}var def=[{id:1,icone:"🍕",nom:"Pizza Artisanale",description:"Pâte maison, produits frais, cuisson au feu de bois",prix:14,categorie:"Plat",image:"https://placehold.co/400x300/1a1a2e/e67e22?text=Pizza"},{id:2,icone:"🍔",nom:"Burger Gastronomique",description:"Viande maturée, pain brioché, sauce signature",prix:16,categorie:"Plat",image:"https://placehold.co/400x300/1a1a2e/e67e22?text=Burger"},{id:3,icone:"🥗",nom:"Salade Composée",description:"Légumes de saison, vinaigrette maison",prix:11,categorie:"Entrée",image:"https://placehold.co/400x300/1a1a2e/e67e22?text=Salade"},{id:4,icone:"🍝",nom:"Pâtes Fraîches",description:"Faites main, sauces traditionnelles",prix:13,categorie:"Plat",image:"https://placehold.co/400x300/1a1a2e/e67e22?text=Pates"},{id:5,icone:"🥩",nom:"Grillade du Chef",description:"Pièces de viande premium",prix:22,categorie:"Plat",image:"https://placehold.co/400x300/1a1a2e/e67e22?text=Grillade"},{id:6,icone:"🍰",nom:"Dessert Maison",description:"Pâtisserie française, produits nobles",prix:9,categorie:"Dessert",image:"https://placehold.co/400x300/1a1a2e/e67e22?text=Dessert"}];localStorage.setItem(STORAGE_PRODS,JSON.stringify(def));return def;}
 var filtreCategorie=null;
