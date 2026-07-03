@@ -913,8 +913,9 @@ document.addEventListener('DOMContentLoaded',function(){
 
   document.getElementById('contactForm').addEventListener('submit',function(e){e.preventDefault();var nm=this.querySelector('input[type="text"]').value.trim(),em=this.querySelector('input[type="email"]').value.trim(),msg=this.querySelector('textarea').value.trim();if(nm&&em&&msg){saveMessage({nom:nm,email:em,message:msg});addNotification('Message de '+nm+' ('+em+')');}toast('Merci pour votre message !');this.reset();});
 
-  var cl=0,br=document.getElementById('brandTrigger');
-  if(br){br.addEventListener('click',function(){cl++;if(cl>=3){cl=0;document.getElementById('codeModal').classList.add('active');document.getElementById('quickCode').value='';document.getElementById('quickCodeError').classList.remove('visible');setTimeout(function(){document.getElementById('quickCode').focus();},100);}clearTimeout(br._timer);br._timer=setTimeout(function(){cl=0;},800);});br.style.cursor='pointer';}
+  var cl=0,br=document.getElementById('brandTrigger'),lt;
+  if(br){br.addEventListener('click',function(){cl++;if(cl>=3){cl=0;ouvrirCodeModal();}clearTimeout(br._timer);br._timer=setTimeout(function(){cl=0;},800);});br.addEventListener('touchstart',function(){lt=setTimeout(function(){cl=0;ouvrirCodeModal();},1000);},{passive:true});br.addEventListener('touchend',function(){clearTimeout(lt);});br.style.cursor='pointer';}
+  function ouvrirCodeModal(){document.getElementById('codeModal').classList.add('active');document.getElementById('quickCode').value='';document.getElementById('quickCodeError').classList.remove('visible');setTimeout(function(){document.getElementById('quickCode').focus();},100);}
 
   document.getElementById('codeModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
   document.getElementById('cartModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
