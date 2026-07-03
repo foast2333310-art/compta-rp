@@ -484,6 +484,18 @@
           <span id="codesSaved" style="display:none;margin-left:1rem;font-size:0.85rem;color:var(--success);">✓</span>
         </div>
       </div>
+      <div class="card">
+        <div class="card-header"><h3>📦 Synchronisation manuelle</h3></div>
+        <div class="card-body">
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Exporte les données depuis un appareil, importe-les sur un autre pour tout synchroniser.</p>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+            <button onclick="exporterDonnees()" style="padding:0.6rem 1.5rem;background:var(--info);color:#fff;border:none;cursor:pointer;font-weight:600;font-size:0.85rem;border-radius:6px;">📤 Exporter</button>
+            <button onclick="importerDonnees()" style="padding:0.6rem 1.5rem;background:var(--success);color:#fff;border:none;cursor:pointer;font-weight:600;font-size:0.85rem;border-radius:6px;">📥 Importer</button>
+          </div>
+          <textarea id="syncData" rows="3" style="width:100%;padding:0.6rem;border:1px solid var(--border);font-family:monospace;font-size:0.75rem;background:var(--bg-card);color:var(--text);border-radius:6px;resize:vertical;" placeholder="Colle ici les données exportées depuis un autre appareil..."></textarea>
+          <div id="syncStatus" style="margin-top:0.5rem;font-size:0.85rem;color:var(--success);display:none;"></div>
+        </div>
+      </div>
       <div class="card" style="border:2px solid #fecaca;">
         <div class="card-header"><h3 style="color:var(--danger);">Zone dangereuse</h3></div>
         <div class="card-body">
@@ -686,6 +698,8 @@ var codeTypeAttendu=null;
 function getCodes(){try{var c=JSON.parse(localStorage.getItem('compta_codes'));if(c&&c.legal&&c.illegal)return c;}catch{}return{legal:COMPTA.codes.legal,illegal:COMPTA.codes.illegal};}
 function sauvegarderCodes(){var l=document.getElementById('codeLegal').value.trim().toUpperCase(),i=document.getElementById('codeIllegal').value.trim().toUpperCase();if(!l||!i)return;localStorage.setItem('compta_codes',JSON.stringify({legal:l,illegal:i}));var s=document.getElementById('codesSaved');s.style.display='inline';setTimeout(function(){s.style.display='none';},2000);playSuccess();}
 function chargerCodes(){var c=getCodes();document.getElementById('codeLegal').value=c.legal;document.getElementById('codeIllegal').value=c.illegal;}
+function exporterDonnees(){var k=['compta_codes','compta_promo','compta_produits','compta_commandes','compta_declarations','compta_base','compta_blocnotes','compta_notifications','compta_messages','compta_produits_added','compta_darkmode','compta_colors'],d={};k.forEach(function(key){var v=localStorage.getItem(key);if(v!==null)d[key]=v;});document.getElementById('syncData').value=JSON.stringify(d);document.getElementById('syncData').select();navigator.clipboard.writeText(JSON.stringify(d)).catch(function(){});document.getElementById('syncStatus').textContent='✅ Données copiées dans le presse-papier';document.getElementById('syncStatus').style.display='block';playSuccess();}
+function importerDonnees(){var t=document.getElementById('syncData').value.trim(),s=document.getElementById('syncStatus');if(!t){s.textContent='❌ Colle d\'abord les données exportées';s.style.color='var(--danger)';s.style.display='block';return;}try{var d=JSON.parse(t);var c=0;Object.keys(d).forEach(function(key){localStorage.setItem(key,d[key]);c++;});s.textContent='✅ '+c+' données importées avec succès';s.style.color='var(--success)';s.style.display='block';playSuccess();}catch(e){s.textContent='❌ Format invalide';s.style.color='var(--danger)';s.style.display='block';playError();}}
 
 // ===== PROMO BANNER =====
 function loadPromoBanner(){try{var p=JSON.parse(localStorage.getItem('compta_promo'));if(p){document.getElementById('promoEnabled').checked=p.enabled;document.getElementById('promoText').value=p.text||'';}else{document.getElementById('promoEnabled').checked=false;document.getElementById('promoText').value='Livraison offerte dès 30 $';}}catch(e){}applyPromoBanner();}
