@@ -180,7 +180,6 @@
       </svg>
       Saveurs &amp; Délices
     </p>
-    <p style="margin-top:0.8rem;"><a href="javascript:void(0)" onclick="openMentions()" style="color:var(--text-muted);font-size:0.75rem;text-decoration:underline;text-underline-offset:3px;">Mentions légales</a></p>
     <p>&copy; 2024 - Tous droits réservés</p>
     <p>Traiteur • Livraison • Événementiel</p>
   </footer>
@@ -471,32 +470,6 @@
       <span style="cursor:pointer;color:var(--text-muted);font-size:1.5rem;" onclick="closeCart()">&times;</span>
     </div>
     <div id="cartContent" style="color:var(--text);"></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="mentionsModal">
-  <div class="modal" style="max-width:500px;text-align:left;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <h2 style="font-size:1.2rem;font-weight:600;margin:0;color:var(--text-title);">Mentions légales</h2>
-      <span style="cursor:pointer;color:var(--text-muted);font-size:1.5rem;line-height:1;" onclick="document.getElementById('mentionsModal').classList.remove('active')">&times;</span>
-    </div>
-    <hr style="border:none;border-top:1px solid var(--border-light);margin-bottom:1rem;">
-    <div style="font-size:0.85rem;color:var(--text);line-height:1.8;">
-      <p><strong>Saveurs &amp; Délices SARL</strong></p>
-      <p>42 Rue des Gastronomes, 75001 Paris</p>
-      <p>Tél. : 01 23 45 67 89 &mdash; Email : contact@saveurs-delices.fr</p>
-      <br>
-      <p><strong>RCS Paris</strong> : 852 456 789</p>
-      <p><strong>SIRET</strong> : 852 456 789 00012</p>
-      <p><strong>APE</strong> : 5610C &mdash; Restauration traditionnelle</p>
-      <p><strong>TVA intracommunautaire</strong> : FR 85 852456789</p>
-      <br>
-      <p><strong>Capital social</strong> : 50 000 $</p>
-      <p><strong>Gérant</strong> : Jonathan Moreau</p>
-      <p><strong>Hébergeur</strong> : Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, USA</p>
-      <br>
-      <p style="color:var(--text-muted);font-size:0.75rem;">Conformément au RGPD, les données collectées via ce site sont destinées à l'usage exclusif de Saveurs &amp; Délices. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p>
-    </div>
   </div>
 </div>
 
@@ -859,9 +832,6 @@ function executerSuppression(){fermerConfirm();localStorage.removeItem(STORAGE_P
 // ===== LIVE PREVIEW =====
 function showLivePreview(){var w=window.open('','_blank');if(!w){alert('Autorisez les popups pour l\'aperçu.');return;}var h='<html><head><link rel="stylesheet" href="css/style.css"><style>.navbar{position:static;}.hero{height:auto;min-height:100vh;}body{background:var(--bg);}</style></head><body>';h+=document.getElementById('publicSite').innerHTML;h+='</body></html>';w.document.write(h);}
 
-// ===== MENTIONS LÉGALES =====
-function openMentions(){document.getElementById('mentionsModal').classList.add('active');playClick();}
-
 // ===== NOTIFICATIONS HISTORIQUE =====
 function renderNotifHistory(){var el=document.getElementById('notifHistoryList'),n=getNotifications();if(n.length===0){el.innerHTML='<p style="color:var(--text-muted);font-size:0.9rem;">Aucune notification.</p>';document.getElementById('sidebarNotifBadge').innerHTML='';return;}var h='<ul class="notif-history">';n.slice().reverse().forEach(function(e){h+='<li><span>'+e.msg+'</span><span class="notif-time">'+e.time+'</span></li>';});h+='</ul>';h+='<button onclick="clearNotifications();renderNotifHistory();" style="margin-top:1rem;padding:0.5rem 1rem;background:var(--text-muted);color:#fff;border:none;cursor:pointer;font-size:0.8rem;border-radius:6px;">Effacer l\'historique</button>';el.innerHTML=h;var sb=document.getElementById('sidebarNotifBadge');if(sb)sb.innerHTML='📜 <strong>'+n.length+'</strong> notifications';}
 
@@ -910,8 +880,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('adminLoginOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
   document.getElementById('confirmModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
   document.getElementById('editDeclModal').addEventListener('click',function(e){if(e.target===this)closeEditDecl();});
-  document.getElementById('mentionsModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
-document.getElementById('quickCode').addEventListener('keydown',function(e){if(e.key==='Enter')checkQuickCode();});
+  document.getElementById('quickCode').addEventListener('keydown',function(e){if(e.key==='Enter')checkQuickCode();});
   document.getElementById('adminPwd').addEventListener('keydown',function(e){if(e.key==='Enter')handleAdminLogin();});
   document.getElementById('archivesCode').addEventListener('keydown',function(e){if(e.key==='Enter')verifierCode();});
   document.getElementById('cmdSearch').addEventListener('input',function(){renderCommandes(this.value);});
