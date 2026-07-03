@@ -10,7 +10,8 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 const STORE_KEYS = [
   'compta_declarations','compta_base','compta_blocnotes',
   'compta_produits','compta_commandes','compta_notifications',
-  'compta_darkmode','compta_colors','compta_messages'
+  'compta_darkmode','compta_colors','compta_messages',
+  'compta_codes','compta_promo','compta_produits_added'
 ];
 
 app.use(express.static(__dirname));
