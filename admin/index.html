@@ -9,6 +9,17 @@
 </head>
 <body>
 
+  <!-- Faux 403 -->
+  <div id="fake403" style="position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a0a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;" onclick="dismiss403()">
+    <div style="text-align:center;max-width:500px;padding:2rem;">
+      <div style="font-size:5rem;font-weight:900;color:#1a1a1a;line-height:1;margin-bottom:0.5rem;letter-spacing:5px;">403</div>
+      <div style="font-size:0.9rem;color:#333;text-transform:uppercase;letter-spacing:3px;margin-bottom:0.5rem;">Accès interdit</div>
+      <div style="width:40px;height:2px;background:#e67e22;margin:1rem auto;"></div>
+      <div style="font-size:0.7rem;color:#555;letter-spacing:1px;">Vous n'êtes pas autorisé à accéder à cette ressource.</div>
+      <div style="margin-top:3rem;font-size:0.55rem;color:#333;letter-spacing:2px;text-transform:uppercase;">⌂ Cliquez pour continuer</div>
+    </div>
+  </div>
+
   <!-- Écran de connexion -->
   <div id="loginScreen" class="admin-login-body">
     <div class="login-container">

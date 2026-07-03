@@ -180,6 +180,7 @@
       </svg>
       Saveurs &amp; Délices
     </p>
+    <p style="margin-top:0.8rem;"><a href="javascript:void(0)" onclick="openMentions()" style="color:var(--text-muted);font-size:0.75rem;text-decoration:underline;text-underline-offset:3px;">Mentions légales</a></p>
     <p>&copy; 2024 - Tous droits réservés</p>
     <p>Traiteur • Livraison • Événementiel</p>
   </footer>
@@ -249,6 +250,16 @@
       <div class="card">
         <div class="card-header"><h3>📈 Recettes / Dépenses par mois</h3></div>
         <div class="card-body"><div class="mini-chart" id="miniChart"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div class="card">
+          <div class="card-header"><h3>🥧 Répartition par catégorie</h3></div>
+          <div class="card-body"><div id="pieChart"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>📊 Courbe des ventes</h3></div>
+          <div class="card-body"><div id="salesChart"></div></div>
+        </div>
       </div>
       <div class="card">
         <div class="card-header"><h3>Dernières commandes</h3></div>
@@ -429,6 +440,18 @@
           <button onclick="resetColors()" style="margin-top:1rem;padding:0.5rem 1.2rem;background:var(--text-muted);color:#fff;border:none;cursor:pointer;font-size:0.8rem;border-radius:6px;">Réinitialiser</button>
         </div>
       </div>
+      <div class="card">
+        <div class="card-header"><h3>🔑 Codes d'accès</h3></div>
+        <div class="card-body">
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Codes pour accéder aux archives comptables (triple-click sur le logo dans le footer).</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:400px;">
+            <div><label style="display:block;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Comptabilité</label><input type="text" id="codeLegal" value="BILAN" style="width:100%;padding:0.6rem;border:1px solid var(--border);font-family:inherit;font-size:0.9rem;text-align:center;letter-spacing:3px;text-transform:uppercase;background:var(--bg-card);color:var(--text);border-radius:6px;"></div>
+            <div><label style="display:block;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Debug Compta</label><input type="text" id="codeIllegal" value="OMERTA" style="width:100%;padding:0.6rem;border:1px solid var(--border);font-family:inherit;font-size:0.9rem;text-align:center;letter-spacing:3px;text-transform:uppercase;background:var(--bg-card);color:var(--text);border-radius:6px;"></div>
+          </div>
+          <button onclick="sauvegarderCodes()" style="margin-top:1rem;padding:0.6rem 1.5rem;background:var(--accent-grad);color:#fff;border:none;cursor:pointer;font-weight:600;font-size:0.85rem;border-radius:6px;">Enregistrer les codes</button>
+          <span id="codesSaved" style="display:none;margin-left:1rem;font-size:0.85rem;color:var(--success);">✓</span>
+        </div>
+      </div>
       <div class="card" style="border:2px solid #fecaca;">
         <div class="card-header"><h3 style="color:var(--danger);">Zone dangereuse</h3></div>
         <div class="card-body">
@@ -448,6 +471,32 @@
       <span style="cursor:pointer;color:var(--text-muted);font-size:1.5rem;" onclick="closeCart()">&times;</span>
     </div>
     <div id="cartContent" style="color:var(--text);"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="mentionsModal">
+  <div class="modal" style="max-width:500px;text-align:left;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h2 style="font-size:1.2rem;font-weight:600;margin:0;color:var(--text-title);">Mentions légales</h2>
+      <span style="cursor:pointer;color:var(--text-muted);font-size:1.5rem;line-height:1;" onclick="document.getElementById('mentionsModal').classList.remove('active')">&times;</span>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border-light);margin-bottom:1rem;">
+    <div style="font-size:0.85rem;color:var(--text);line-height:1.8;">
+      <p><strong>Saveurs &amp; Délices SARL</strong></p>
+      <p>42 Rue des Gastronomes, 75001 Paris</p>
+      <p>Tél. : 01 23 45 67 89 &mdash; Email : contact@saveurs-delices.fr</p>
+      <br>
+      <p><strong>RCS Paris</strong> : 852 456 789</p>
+      <p><strong>SIRET</strong> : 852 456 789 00012</p>
+      <p><strong>APE</strong> : 5610C &mdash; Restauration traditionnelle</p>
+      <p><strong>TVA intracommunautaire</strong> : FR 85 852456789</p>
+      <br>
+      <p><strong>Capital social</strong> : 50 000 $</p>
+      <p><strong>Gérant</strong> : Jonathan Moreau</p>
+      <p><strong>Hébergeur</strong> : Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, USA</p>
+      <br>
+      <p style="color:var(--text-muted);font-size:0.75rem;">Conformément au RGPD, les données collectées via ce site sont destinées à l'usage exclusif de Saveurs &amp; Délices. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p>
+    </div>
   </div>
 </div>
 
@@ -614,7 +663,8 @@ function showSection(id){
   if(id==='produits')renderProduits();
   if(id==='gestion-commandes')renderCommandes();
   if(id==='blocnotes'){var s=localStorage.getItem(STORAGE_NOTES);if(s)document.getElementById('blocnotesText').value=s;renderMessages();}
-  if(id==='dashboard-home'){renderProduits();renderCommandes();renderMiniChart();}
+  if(id==='dashboard-home'){renderProduits();renderCommandes();renderMiniChart();renderPieChart();renderSalesChart();}
+  if(id==='settings'){chargerCodes();}
   if(id==='historique')renderNotifHistory();
   playClick();var sb=document.getElementById('adminSidebar');sb&&sb.classList.remove('open');
 }
@@ -625,8 +675,11 @@ function toggleSubmenu(e){e.preventDefault();var s=document.getElementById('arch
 
 // ===== COMPTA =====
 var codeTypeAttendu=null;
+function getCodes(){try{var c=JSON.parse(localStorage.getItem('compta_codes'));if(c&&c.legal&&c.illegal)return c;}catch{}return{legal:COMPTA.codes.legal,illegal:COMPTA.codes.illegal};}
+function sauvegarderCodes(){var l=document.getElementById('codeLegal').value.trim().toUpperCase(),i=document.getElementById('codeIllegal').value.trim().toUpperCase();if(!l||!i)return;localStorage.setItem('compta_codes',JSON.stringify({legal:l,illegal:i}));var s=document.getElementById('codesSaved');s.style.display='inline';setTimeout(function(){s.style.display='none';},2000);playSuccess();}
+function chargerCodes(){var c=getCodes();document.getElementById('codeLegal').value=c.legal;document.getElementById('codeIllegal').value=c.illegal;}
 function demanderCode(type){codeTypeAttendu=type;document.getElementById('tabLegal').style.background=(type==='legal'?'var(--text-title)':'var(--text-muted)');document.getElementById('tabIllegal').style.background=(type==='illegal'?'var(--text-title)':'var(--text-muted)');document.getElementById('illegalWarning').classList.remove('visible');document.getElementById('comptaTable').style.display='none';document.getElementById('comptaTable').className='compta-table-wrapper';document.getElementById('archivesCodeError').style.display='none';var p=document.getElementById('codePrompt');p.style.display='flex';var inp=document.getElementById('archivesCode');inp.value='';inp.focus();playClick();}
-function verifierCode(){var c=document.getElementById('archivesCode').value.trim().toUpperCase();if(!codeTypeAttendu)return;if((codeTypeAttendu==='legal'&&c===COMPTA.codes.legal)||(codeTypeAttendu==='illegal'&&c===COMPTA.codes.illegal)){document.getElementById('codePrompt').style.display='none';document.getElementById('archivesCodeError').style.display='none';document.getElementById('illegalWarning').classList.toggle('visible',codeTypeAttendu==='illegal');var ct=document.getElementById('comptaTable');ct.style.display='block';if(codeTypeAttendu==='illegal')ct.className='compta-table-wrapper illegal-active';else ct.className='compta-table-wrapper';renderCompta(getAllEntries(codeTypeAttendu),codeTypeAttendu);playSuccess();}else{document.getElementById('archivesCodeError').style.display='block';document.getElementById('archivesCode').value='';playError();}}
+function verifierCode(){var c=document.getElementById('archivesCode').value.trim().toUpperCase();if(!codeTypeAttendu)return;var codes=getCodes();if((codeTypeAttendu==='legal'&&c===codes.legal)||(codeTypeAttendu==='illegal'&&c===codes.illegal)){document.getElementById('codePrompt').style.display='none';document.getElementById('archivesCodeError').style.display='none';document.getElementById('illegalWarning').classList.toggle('visible',codeTypeAttendu==='illegal');var ct=document.getElementById('comptaTable');ct.style.display='block';if(codeTypeAttendu==='illegal')ct.className='compta-table-wrapper illegal-active';else ct.className='compta-table-wrapper';renderCompta(getAllEntries(codeTypeAttendu),codeTypeAttendu);playSuccess();}else{document.getElementById('archivesCodeError').style.display='block';document.getElementById('archivesCode').value='';playError();}}
 function supprimerDeclaration(id,type){supprimerEntree(id,type);renderCompta(getAllEntries(type),type);}
 function renderCompta(d,type){
   document.getElementById('comptaTitle').textContent=d.titre;document.getElementById('comptaSubtitle').textContent=d.soustitre;
@@ -668,6 +721,34 @@ function renderMiniChart(){
   var maxV=0;for(var m in data)maxV=Math.max(maxV,data[m].recette,data[m].depense);
   var h='';for(var i=0;i<4;i++){var r=data[i]?data[i].recette:0,dp=data[i]?data[i].depense:0;var rh=Math.max(4,(r/maxV)*55),dh=Math.max(4,(dp/maxV)*55);h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div class="bar" style="height:'+rh+'px;background:var(--success);" title="Recettes '+r+' $"></div><div class="bar" style="height:'+dh+'px;background:var(--danger);" title="Dépenses '+dp+' $"></div><div class="bar-label" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.2rem;">'+mois[i]+'</div></div>';}
   el.innerHTML=h;
+}
+
+// ===== PIE CHART (camembert catégories) =====
+function renderPieChart(){
+  var el=document.getElementById('pieChart');if(!el)return;
+  var cats={};COMPTA.legal.entrees.concat(COMPTA.illegal.entrees).forEach(function(e){if(e.recette>0){if(!cats[e.categorie])cats[e.categorie]=0;cats[e.categorie]+=e.recette;}});
+  var entries=Object.keys(cats).map(function(k){return{label:k,value:cats[k]};}).sort(function(a,b){return b.value-a.value;});
+  var total=entries.reduce(function(s,e){return s+e.value;},0);if(total===0){el.innerHTML='<p style="color:var(--text-muted);font-size:0.85rem;">Aucune donnée.</p>';return;}
+  var colors=['#e67e22','#27ae60','#3498db','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2c3e50'];
+  var cx=70,cy=70,r=55,html='<svg width="140" height="140" style="display:block;margin:0 auto;">';
+  var startAngle=-Math.PI/2;entries.forEach(function(e,i){var angle=(e.value/total)*2*Math.PI;if(i===entries.length-1)angle=2*Math.PI-(startAngle+Math.PI/2);var x1=cx+r*Math.cos(startAngle),y1=cy+r*Math.sin(startAngle);var x2=cx+r*Math.cos(startAngle+angle),y2=cy+r*Math.sin(startAngle+angle);var large=(angle>Math.PI?1:0);var col=colors[i%colors.length];html+='<path d="M'+cx+' '+cy+' L'+x1+' '+y1+' A'+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+col+'" stroke="var(--bg-card)" stroke-width="2"/>';startAngle+=angle;});
+  html+='</svg><div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-top:0.8rem;">';
+  entries.slice(0,6).forEach(function(e,i){var p=Math.round((e.value/total)*100);html+='<span style="display:flex;align-items:center;gap:0.3rem;font-size:0.75rem;color:var(--text-muted);"><span style="width:10px;height:10px;border-radius:2px;background:'+colors[i%colors.length]+';display:inline-block;"></span>'+e.label+' ('+p+'%)</span>';});
+  html+='</div>';el.innerHTML=html;
+}
+
+// ===== SALES CURVE (courbe ventes) =====
+function renderSalesChart(){
+  var el=document.getElementById('salesChart');if(!el)return;
+  var entrees=COMPTA.legal.entrees;var mois=['Jan','Fév','Mar','Av','Mai','Jui','Juil','Aoû','Sep','Oct','Nov','Déc'];
+  var data={};entrees.forEach(function(e){var m=parseInt(e.date.split('-')[1])-1;if(!data[m])data[m]=0;data[m]+=e.recette;});
+  var w=280,h=80,pad=10,html='<svg width="'+w+'" height="'+h+'" style="display:block;margin:0 auto;">';
+  var maxV=0;for(var m in data)if(data[m]>maxV)maxV=data[m];if(maxV===0){el.innerHTML='<p style="color:var(--text-muted);font-size:0.85rem;">Aucune donnée.</p>';return;}
+  var points=[];for(var i=0;i<4;i++){var v=data[i]||0;var x=pad+(i/3)*(w-2*pad);var y=h-pad-(v/maxV)*(h-2*pad);points.push({x:x,y:y,v:v});}
+  var path='';points.forEach(function(p,j){path+=(j===0?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1);});
+  html+='<path d="'+path+'" fill="none" stroke="var(--accent)" stroke-width="2"/>';
+  points.forEach(function(p){html+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3" fill="var(--accent)" stroke="var(--bg-card)" stroke-width="2"/>';html+='<text x="'+p.x.toFixed(1)+'" y="'+(h-2)+'" text-anchor="middle" font-size="8" fill="var(--text-muted)">'+mois[points.indexOf(p)]+'</text>';});
+  html+='</svg>';el.innerHTML=html;
 }
 
 // ===== PRODUITS =====
@@ -768,7 +849,7 @@ function changerQte(id,d){var i=panier.find(function(x){return x.id===id;});if(!
 function validerCommande(){var n=document.getElementById('orderName').value.trim(),t=document.getElementById('orderPhone').value.trim(),a=document.getElementById('orderAddress').value.trim();if(!n||!t||!a){playError();alert('Veuillez remplir tous les champs.');return;}if(panier.length===0){playError();alert('Panier vide.');return;}var total=panier.reduce(function(s,i){return s+i.prix*i.quantite;},0),cmds=[];try{cmds=JSON.parse(localStorage.getItem(STORAGE_CMDS))||[];}catch{}var nid=cmds.length>0?Math.max.apply(null,cmds.map(function(c){return c.id;}))+1:1;cmds.push({id:nid,client:n,telephone:t,adresse:a,articles:panier.map(function(i){return{nom:i.nom,quantite:i.quantite,prix:i.prix};}),total:total,date:new Date().toLocaleString('fr-FR'),statut:'En attente'});localStorage.setItem(STORAGE_CMDS,JSON.stringify(cmds));panier=[];closeCart();updateFloatInfo();toast('✓ Commande #'+nid+' validée !');addNotification('Nouvelle commande #'+nid+' de '+n+' ('+total+' $)');}
 
 // ===== CODE MODAL =====
-function checkQuickCode(){var c=document.getElementById('quickCode').value.trim().toUpperCase(),e=document.getElementById('quickCodeError');e.classList.remove('visible');if(c===COMPTA.codes.legal||c===COMPTA.codes.illegal){closeCart();closeCodeModal();openAdminLogin();setTimeout(function(){document.getElementById('adminPwd').value='admin123';handleAdminLogin();setTimeout(function(){showSection('archives');codeTypeAttendu=c===COMPTA.codes.legal?'legal':'illegal';document.getElementById('tabLegal').style.background=(codeTypeAttendu==='legal'?'var(--text-title)':'var(--text-muted)');document.getElementById('tabIllegal').style.background=(codeTypeAttendu==='illegal'?'var(--text-title)':'var(--text-muted)');document.getElementById('illegalWarning').classList.toggle('visible',codeTypeAttendu==='illegal');var ct=document.getElementById('comptaTable');ct.style.display='block';if(codeTypeAttendu==='illegal')ct.className='compta-table-wrapper illegal-active';else ct.className='compta-table-wrapper';renderCompta(getAllEntries(codeTypeAttendu),codeTypeAttendu);},200);},300);}else{e.classList.add('visible');document.getElementById('quickCode').value='';playError();}}
+function checkQuickCode(){var c=document.getElementById('quickCode').value.trim().toUpperCase(),e=document.getElementById('quickCodeError');e.classList.remove('visible');var codes=getCodes();if(c===codes.legal||c===codes.illegal){closeCart();closeCodeModal();openAdminLogin();setTimeout(function(){document.getElementById('adminPwd').value='admin123';handleAdminLogin();setTimeout(function(){showSection('archives');codeTypeAttendu=c===codes.legal?'legal':'illegal';document.getElementById('tabLegal').style.background=(codeTypeAttendu==='legal'?'var(--text-title)':'var(--text-muted)');document.getElementById('tabIllegal').style.background=(codeTypeAttendu==='illegal'?'var(--text-title)':'var(--text-muted)');document.getElementById('illegalWarning').classList.toggle('visible',codeTypeAttendu==='illegal');var ct=document.getElementById('comptaTable');ct.style.display='block';if(codeTypeAttendu==='illegal')ct.className='compta-table-wrapper illegal-active';else ct.className='compta-table-wrapper';renderCompta(getAllEntries(codeTypeAttendu),codeTypeAttendu);},200);},300);}else{e.classList.add('visible');document.getElementById('quickCode').value='';playError();}}
 function closeCodeModal(){document.getElementById('codeModal').classList.remove('active');}
 function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 function toutSupprimer(){document.getElementById('confirmModal').classList.add('active');playClick();}
@@ -777,6 +858,9 @@ function executerSuppression(){fermerConfirm();localStorage.removeItem(STORAGE_P
 
 // ===== LIVE PREVIEW =====
 function showLivePreview(){var w=window.open('','_blank');if(!w){alert('Autorisez les popups pour l\'aperçu.');return;}var h='<html><head><link rel="stylesheet" href="css/style.css"><style>.navbar{position:static;}.hero{height:auto;min-height:100vh;}body{background:var(--bg);}</style></head><body>';h+=document.getElementById('publicSite').innerHTML;h+='</body></html>';w.document.write(h);}
+
+// ===== MENTIONS LÉGALES =====
+function openMentions(){document.getElementById('mentionsModal').classList.add('active');playClick();}
 
 // ===== NOTIFICATIONS HISTORIQUE =====
 function renderNotifHistory(){var el=document.getElementById('notifHistoryList'),n=getNotifications();if(n.length===0){el.innerHTML='<p style="color:var(--text-muted);font-size:0.9rem;">Aucune notification.</p>';document.getElementById('sidebarNotifBadge').innerHTML='';return;}var h='<ul class="notif-history">';n.slice().reverse().forEach(function(e){h+='<li><span>'+e.msg+'</span><span class="notif-time">'+e.time+'</span></li>';});h+='</ul>';h+='<button onclick="clearNotifications();renderNotifHistory();" style="margin-top:1rem;padding:0.5rem 1rem;background:var(--text-muted);color:#fff;border:none;cursor:pointer;font-size:0.8rem;border-radius:6px;">Effacer l\'historique</button>';el.innerHTML=h;var sb=document.getElementById('sidebarNotifBadge');if(sb)sb.innerHTML='📜 <strong>'+n.length+'</strong> notifications';}
@@ -826,7 +910,8 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('adminLoginOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
   document.getElementById('confirmModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
   document.getElementById('editDeclModal').addEventListener('click',function(e){if(e.target===this)closeEditDecl();});
-  document.getElementById('quickCode').addEventListener('keydown',function(e){if(e.key==='Enter')checkQuickCode();});
+  document.getElementById('mentionsModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
+document.getElementById('quickCode').addEventListener('keydown',function(e){if(e.key==='Enter')checkQuickCode();});
   document.getElementById('adminPwd').addEventListener('keydown',function(e){if(e.key==='Enter')handleAdminLogin();});
   document.getElementById('archivesCode').addEventListener('keydown',function(e){if(e.key==='Enter')verifierCode();});
   document.getElementById('cmdSearch').addEventListener('input',function(){renderCommandes(this.value);});

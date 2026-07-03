@@ -377,3 +377,5 @@ document.addEventListener('DOMContentLoaded', function() {
   renderProduits();
   renderCommandes();
 });
+
+function dismiss403(){document.getElementById('fake403').style.display='none';try{playClick();}catch(e){}}
