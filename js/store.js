@@ -19,10 +19,28 @@ function loadFromServer() {
 _serverOk = loadFromServer();
 
 setInterval(function() {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/api/data/keepalive', true);
-  xhr.send();
+  fetch('/api/data/keepalive').catch(function(){});
 }, 120000);
+
+var _writeCount = 0;
+var _origSetItem = origSetItem;
+
+setInterval(function() {
+  if (!_serverOk) return;
+  fetch('/api/data/all').then(function(r) { if (!r.ok) throw Error(); return r.json(); }).then(function(data) {
+    var changed = false;
+    _keys.forEach(function(k) {
+      if (data[k] !== undefined && data[k] !== _cache[k]) {
+        _cache[k] = data[k];
+        _origSetItem(k, data[k]);
+        changed = true;
+      }
+    });
+    if (changed) {
+      try { window.dispatchEvent(new CustomEvent('store-sync')); } catch(e) {}
+    }
+  }).catch(function(){});
+}, 2000);
 
 var origGetItem = localStorage.getItem.bind(localStorage);
 var origSetItem = localStorage.setItem.bind(localStorage);

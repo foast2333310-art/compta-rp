@@ -940,6 +940,18 @@ document.addEventListener('DOMContentLoaded',function(){
   var bn=document.getElementById('blocnotesText');
   if(bn){bn.addEventListener('input',function(){clearTimeout(bn._timer);bn._timer=setTimeout(function(){localStorage.setItem(STORAGE_NOTES,document.getElementById('blocnotesText').value);document.getElementById('blocnotesSaved').textContent=new Date().toLocaleString('fr-FR');},500);});}
 
+  window.addEventListener('store-sync',function(){
+    var s=document.querySelector('.section-view[style*="block"]');
+    if(!s)return;
+    var id=s.id;
+    if(id==='produits')renderProduits();
+    if(id==='gestion-commandes')renderCommandes();
+    if(id==='blocnotes'){renderMessages();}
+    if(id==='dashboard-home'){renderProduits();renderCommandes();renderMiniChart();renderPieChart();renderSalesChart();}
+    if(id==='historique')renderNotifHistory();
+    if(id==='archives')renderCompta();
+  });
+
   setTimeout(function(){if(ls){ls.style.opacity='0';ls.style.visibility='hidden';setTimeout(function(){if(ls.parentNode)ls.parentNode.removeChild(ls);},600);}},800);
 });
 </script>
