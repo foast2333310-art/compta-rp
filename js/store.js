@@ -6,12 +6,23 @@ var _cache = {};
 var _serverOk = true;
 var _keys = ['compta_declarations','compta_base','compta_blocnotes','compta_produits','compta_commandes','compta_notifications','compta_darkmode','compta_colors','compta_messages','compta_codes','compta_promo','compta_produits_added'];
 
-try {
+function loadFromServer() {
+  try {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/data/all', false);
+    xhr.send();
+    if (xhr.status === 200) { _cache = JSON.parse(xhr.responseText); return true; }
+  } catch(e) {}
+  return false;
+}
+
+_serverOk = loadFromServer();
+
+setInterval(function() {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/api/data/all', false);
+  xhr.open('GET', '/api/data/keepalive', true);
   xhr.send();
-  if (xhr.status === 200) { _cache = JSON.parse(xhr.responseText); } else { _serverOk = false; }
-} catch(e) { _serverOk = false; }
+}, 120000);
 
 var origGetItem = localStorage.getItem.bind(localStorage);
 var origSetItem = localStorage.setItem.bind(localStorage);
